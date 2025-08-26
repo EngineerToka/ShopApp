@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Product\ProductsController;
 use App\Http\Controllers\Category\CategoryController;
 use App\Http\Controllers\Product\ProductImagesController;
@@ -23,6 +24,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    // user routes
+     Route::prefix('user')->group(function(){
+    Route::get('profile', [UserController::class,'profile']);
+    Route::put('profile', [UserController::class,'update']);
+    Route::post('logout', [UserController::class,'logout']);
+    });
     // Product routes
     Route::apiResource('product', ProductsController::class)
          ->only(['store', 'update', 'destroy']);
@@ -43,3 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
       // Category routes
     Route::apiResource('categories',CategoryController::class)
           ->only(['index', 'show']);
+
+         // user routes
+     Route::post('register', [UserController::class,'register']);
+     Route::post('login', [UserController::class,'login']);

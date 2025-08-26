@@ -3,82 +3,118 @@
 namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\UserRquest;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        //
+        $users= User::all();
+        return response()->json(
+            [
+            'users'=>$users
+            ]
+          );
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+
+    public function store(UserRequest  $request)
     {
-        //
+        $userData = $request->only('name','email','phone','adress','role','status');
+        $userData['password']= Hash::make($request->password);
+        if($request->hasFile('profile_image')){
+            $path = $request->file('profile_image')->store('profile_images','public');
+        }
+        User::create($userData);
+
+        return response()->json([
+            'message' => 'User registered successfully',
+            'user' => $user
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function login(Request $request)
     {
-        //
+           $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
+           ]);
+
+           $user = User::where('email',$request->email)->first();
+
+               if(!$user || !Hash::check($request->password, $user->password)){
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.']
+            ]);
+        }
+
+        // Check if user is active
+        if(!$user->status){
+            return response()->json([
+                'message' => 'Your account is deactivated.'
+            ], 403);
+        }
+
+        $token = $use->createToken('auth_token')->plainTextToken;
+        return response()->json([
+            'message' => 'Login successful',
+            'access_token' => $token,
+            'user' => $user
+        ]);
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        //
+        $user= User::findOrFail($id);
+        return response()->json(
+            [
+            'user'=>$user
+            ]
+          );
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+   // Update user
+    public function update(UserRequest $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        $userData = $request->only('name','email','phone','adress','role','status');
+
+        if($request->filled('password')){
+            $userData['password'] = Hash::make($request->password);
+        }
+
+        if($request->hasFile('profile_image')){
+            $path = $request->file('profile_image')->store('profile_images','public');
+            if($user->profile_image){
+                Storage::disk('public')->delete($user->profile_image);
+            }
+            $userData['profile_image'] = $path;
+        }
+
+        $user->update($userData);
+
+        return response()->json([
+            'message' => 'User updated successfully',
+            'user' => $user
+        ], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function logOut(Request $request)
     {
-        //
+         $request->user()->CurrentAcessToken()->delete();
+            return response()->json([
+                'message' => 'Logged out successfully']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
-        //
+         $user= User::findOrFail($id);
+         $user->delete();
+            return response()->json([
+                'message' => 'User deleted successfully']);
     }
 }
