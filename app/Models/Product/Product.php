@@ -26,6 +26,12 @@ class Product extends Model
         return $image ? $image->image_url : null;
      }
 
+      // Accessor for created_at to return formatted date
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('d M Y');
+    }
+
      public function user(){
         return $this->belongsTo(User::class,'user_id','id');
      }
@@ -40,3 +46,4 @@ class Product extends Model
         return $this->belongsToMany(User::class,'wish_lists','product_id', 'user_id')->withTimestamps();
      }
 }
+

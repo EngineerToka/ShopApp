@@ -3,82 +3,60 @@
 namespace App\Http\Controllers\Product;
 
 use Illuminate\Http\Request;
+use App\Models\Product\Product;
+use App\Models\Product\ProductImage;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\ProductImageRequest;
+
 
 class ProductImagesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function index($productId)
     {
-        //
+        $product =Product::with('images')->findOrFail($productId);
+
+        return response()->json(
+           $product->images
+        );
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function store(ProductImageRequest $request,$productId)
     {
-        //
+        $product = Product::findOrFail($productId);
+        $path= $request->file('image')->store('productImages','public');
+        $originalName=$request->file('image')->getClientOriginalName();
+
+        $product->images()->create(
+            [
+                'path'=>$path,
+                'orignal_name'=>$originalName
+
+            ]
+            );
+
+         return  response()->json([
+                'message'=>'Image uploaded successfully',
+                'images'=>$product->fresh()->images,
+            ]);
+
+
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function destroy($productId,$imageId)
     {
-        //
-    }
+        $product =Product::findOrFail($productId);
+        $image =$product->images()->findOrFail($imageId);
+        if(Storage::disk('public')->exists($image->path)){
+        Storage::disk('public')->delete($image->path);
+        $image->delete();
+        }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+         return response()->json(
+            [
+            'message' => 'Image deleted successfully',
+            'images'=>$product->fresh()->images,
+            ]
+        );
     }
 }

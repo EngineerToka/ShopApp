@@ -32,7 +32,7 @@ class ProductsController extends Controller
 
     public function show($id)
     {
-        $product= Product::with('images','user')->findOrFail($id);
+        $product= Product::with('images','user')->findOrFail($id)->append('MainImage');
 
         return response()->json($product);
     }
