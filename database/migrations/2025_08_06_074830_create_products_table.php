@@ -22,6 +22,7 @@ class CreateProductsTable extends Migration
             $table->decimal('discount_price', 10, 2)->nullable();
             $table->boolean('status')->default(true);
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->timestamps();
         });
     }

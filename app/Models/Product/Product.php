@@ -5,16 +5,18 @@ namespace App\Models\Product;
 use App\Models\User\User;
 use App\Models\Cart\CartItem;
 use App\Models\Order\OrderItem;
+use App\Models\Category\Category;
 use App\Models\Product\ProductImage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 
 class Product extends Model 
 {
     use HasFactory;
     protected $table = 'products';
-    protected $fillable = ['title', 'description', 'quantity', 'price', 'discount_price', 'status','user_id'];
+    protected $fillable = ['title', 'description', 'quantity', 'price', 'discount_price', 'status','user_id','category_id'];
 
     public function images(): MorphMany
     {
@@ -44,6 +46,9 @@ class Product extends Model
     }
      public function wishListedBy(){
         return $this->belongsToMany(User::class,'wish_lists','product_id', 'user_id')->withTimestamps();
+     }
+     public function category(){
+        return $this->belongsTo(Category::class,'category_id','id');
      }
 }
 
