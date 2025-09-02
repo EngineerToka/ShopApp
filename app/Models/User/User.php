@@ -62,6 +62,21 @@ class User extends Authenticatable
         return $this->belongsToMany(Product::class,'wish_lists','user_id', 'product_id')->withTimestamps();
     }
 
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = bcrypt($password);
+
+    }
+
+    public function isAdmin()
+    {
+      return $this->role ==='admin';
+    }
+    public function isSeller()
+    {
+      return $this->role ==='seller';
+    }
+
 
 
 }

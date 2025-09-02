@@ -23,6 +23,29 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::middleware('role:admin')->group(function(){
+    // admin routes
+        // Category routes
+       Route::apiResource('categories',CategoryController::class)
+         ->only(['store', 'update', 'destroy']);
+        // user routes
+       Route::apiResource('users',UserController::class)
+       ->only(['index', 'show', 'store', 'update', 'destroy']);
+});
+
+Route::middleware('role:seller')->group(function(){
+    // seller routes
+    // Product routes
+        Route::apiResource('product', ProductsController::class)
+         ->only(['store', 'update', 'destroy']);
+     // Product images routes
+    Route::prefix('products')->group(function(){
+        Route::post('{productId}/images',[ProductImagesController::class,'store']);
+        Route::delete('{productId}/images/{imageId}',[ProductImagesController::class,'destroy']);
+    });
+
+});
+
 Route::middleware('auth:sanctum')->group(function () {
     // user routes
      Route::prefix('user')->group(function(){
@@ -30,27 +53,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('profile', [UserController::class,'update']);
     Route::post('logout', [UserController::class,'logout']);
     });
-    // Product routes
-    Route::apiResource('product', ProductsController::class)
-         ->only(['store', 'update', 'destroy']);
-     // Product images routes
-    Route::prefix('products')->group(function(){
-        Route::get('{productId}/images',[ProductImagesController::class,'index']);
-        Route::post('{productId}/images',[ProductImagesController::class,'store']);
-        Route::delete('{productId}/images/{$imageId}',[ProductImagesController::class,'destroy']);
-    });
-    // Category routes
-    Route::apiResource('categories',CategoryController::class)
-         ->only(['store', 'update', 'destroy']);
+
+
 
 });
+// unAuthenticated routes
+
        // Product routes
     Route::apiResource('products', ProductsController::class)
      ->only(['index', 'show']);
       // Category routes
     Route::apiResource('categories',CategoryController::class)
           ->only(['index', 'show']);
-
          // user routes
      Route::post('register', [UserController::class,'register']);
      Route::post('login', [UserController::class,'login']);

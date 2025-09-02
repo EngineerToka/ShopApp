@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\UserRquest;
+use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -22,12 +22,15 @@ class UserController extends Controller
 
     public function store(UserRequest  $request)
     {
-        $userData = $request->only('name','email','phone','adress','role','status');
-        $userData['password']= Hash::make($request->password);
+        $userData = $request->validated();
+
         if($request->hasFile('profile_image')){
             $path = $request->file('profile_image')->store('profile_images','public');
+            $userData['profile_image']=$path;
+
         }
-        User::create($userData);
+
+       $user= User::create($userData);
 
         return response()->json([
             'message' => 'User registered successfully',
@@ -57,7 +60,7 @@ class UserController extends Controller
             ], 403);
         }
 
-        $token = $use->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json([
             'message' => 'Login successful',
             'access_token' => $token,
@@ -81,11 +84,8 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        $userData = $request->only('name','email','phone','adress','role','status');
+        $userData = $request->validated();
 
-        if($request->filled('password')){
-            $userData['password'] = Hash::make($request->password);
-        }
 
         if($request->hasFile('profile_image')){
             $path = $request->file('profile_image')->store('profile_images','public');
@@ -105,7 +105,7 @@ class UserController extends Controller
 
     public function logOut(Request $request)
     {
-         $request->user()->CurrentAcessToken()->delete();
+         $request->user()->currentAccessToken()->delete();
             return response()->json([
                 'message' => 'Logged out successfully']);
     }
