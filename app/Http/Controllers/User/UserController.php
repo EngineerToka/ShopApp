@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -11,12 +12,13 @@ class UserController extends Controller
 
     public function index()
     {
-        $users= User::all();
-        return response()->json(
-            [
-            'users'=>$users
-            ]
-          );
+        $users= User::paginate(10);
+
+         return response()->json([
+            'success' => true,
+            'message' => 'Users retrieved successfully.',
+            'data' => UserResource::collection($users)
+        ]);
     }
 
 
@@ -32,9 +34,10 @@ class UserController extends Controller
 
        $user= User::create($userData);
 
-        return response()->json([
-            'message' => 'User registered successfully',
-            'user' => $user
+         return response()->json([
+            'success' => true,
+            'message' => 'Users created successfully.',
+            'data' => UserResource::collection($user)
         ], 201);
     }
 
@@ -47,24 +50,30 @@ class UserController extends Controller
 
            $user = User::where('email',$request->email)->first();
 
-               if(!$user || !Hash::check($request->password, $user->password)){
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.']
-            ]);
-        }
 
-        // Check if user is active
-        if(!$user->status){
-            return response()->json([
-                'message' => 'Your account is deactivated.'
-            ], 403);
-        }
+           if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'The provided credentials are incorrect.'
+        ], 401);
+    }
+
+    // Check if user is active
+    if (!$user->status) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Your account is deactivated.'
+        ], 403);
+    }
 
         $token = $user->createToken('auth_token')->plainTextToken;
+        
         return response()->json([
             'message' => 'Login successful',
-            'access_token' => $token,
-            'user' => $user
+            'data' => [
+                'access_token' => $token,
+                'user'=> new UserResource($user),
+                ]
         ]);
 
     }
@@ -72,11 +81,12 @@ class UserController extends Controller
     public function show($id)
     {
         $user= User::findOrFail($id);
-        return response()->json(
-            [
-            'user'=>$user
-            ]
-          );
+
+          return response()->json([
+            'success' => true,
+            'message' => 'User retrieved successfully.',
+            'data' => new UserResource($user)
+        ]);
     }
 
    // Update user
@@ -97,17 +107,21 @@ class UserController extends Controller
 
         $user->update($userData);
 
-        return response()->json([
-            'message' => 'User updated successfully',
-            'user' => $user
-        ], 200);
+         return response()->json([
+            'success' => true,
+            'message' => 'User updated successfully.',
+            'data' => new UserResource($user)
+        ]);
     }
 
     public function logOut(Request $request)
     {
          $request->user()->currentAccessToken()->delete();
-            return response()->json([
-                'message' => 'Logged out successfully']);
+ 
+                return response()->json([
+            'success' => true,
+            'message' => 'Logged out successfully.'
+        ]);
     }
 
     public function destroy($id)
@@ -115,6 +129,10 @@ class UserController extends Controller
          $user= User::findOrFail($id);
          $user->delete();
             return response()->json([
-                'message' => 'User deleted successfully']);
+            'success' => true,
+            'message' => 'User deleted successfully.'
+        ]);
+
+                
     }
 }

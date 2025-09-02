@@ -2,15 +2,16 @@
 
 namespace App\Models\Product;
 
+use Carbon\Carbon;
 use App\Models\User\User;
 use App\Models\Cart\CartItem;
 use App\Models\Order\OrderItem;
 use App\Models\Category\Category;
 use App\Models\Product\ProductImage;
+use App\Models\Product\ProductReview;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Carbon\Carbon;
 
 class Product extends Model 
 {
@@ -49,6 +50,16 @@ class Product extends Model
      }
      public function category(){
         return $this->belongsTo(Category::class,'category_id','id');
+     }
+     public function reviews(){
+        return $this->hasMany(ProductReview::class,'product_id','id');
+     }
+
+     public function getRatingAveregaeAttribute()
+     {
+          $avg = $this->reviews()->avg('rating');
+          return $avg ? round($avg,1) : null;
+
      }
 }
 

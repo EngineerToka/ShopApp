@@ -7,6 +7,7 @@ use App\Models\Cart\Cart;
 use App\Models\Order\Order;
 use App\Models\Product\Product;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Product\ProductReview;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -77,6 +78,10 @@ class User extends Authenticatable
       return $this->role ==='seller';
     }
 
+     public function review()
+    {
+        return $this->hasMany(ProductReview::class,'user_id','id');
+    }
 
 
 }

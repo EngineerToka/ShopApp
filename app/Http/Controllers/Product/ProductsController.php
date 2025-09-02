@@ -4,15 +4,20 @@ namespace App\Http\Controllers\Product;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductResource;
 
 class ProductsController extends Controller
 {
 
     public function index()
     {
-        $products = Product::with('images')->latest()->paginate(20);
+        $ProductResource = Product::with('images','category','user')->latest()->paginate(20);
 
-        return response()->json($products);
+        return response()->json([
+            'success' => true,
+            'message' => 'Products retrieved successfully.',
+            'data' => ProductResource::collection($ProductResource),
+        ]);
     }
 
     public function create()
@@ -25,16 +30,17 @@ class ProductsController extends Controller
         $product = Product::create($request->validated());
 
         return response()->json([
+             'success' => true,
              'message' => 'Product created successfully',
-             'products' =>$product 
+             'products' => new ProductResource($product),
             ],201);
     }
 
     public function show($id)
     {
-        $product= Product::with('images','user')->findOrFail($id)->append('MainImage');
+        $product= Product::with('images','user','category')->findOrFail($id)->append('MainImage');
 
-        return response()->json($product);
+        return ProductResource::collection($product );
     }
 
     public function edit($id)
@@ -48,9 +54,10 @@ class ProductsController extends Controller
         $product->update($request->validated());
 
         return response()->json([
+             'success' => true,
              'message' => 'Product updated successfully',
-             'product' =>$product->fresh(),
-            ],201);
+             'product' => new ProductResource($product) ,
+            ],200);
     }
 
     public function destroy($id)
@@ -58,11 +65,17 @@ class ProductsController extends Controller
         $product = Product::findOrFail($id);
 
         if ($product->user_id !== Auth::id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 403);
         }
         
         $product->delete();
 
-         return response()->json(['message' => 'Product deleted successfully']);
+         return response()->json([
+                'success' => true,
+                'message' => 'Product deleted successfully'
+            ],200);
     }
 }

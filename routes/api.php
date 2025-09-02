@@ -6,6 +6,7 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Product\ProductsController;
 use App\Http\Controllers\Category\CategoryController;
 use App\Http\Controllers\Product\ProductImagesController;
+use App\Http\Controllers\Product\ProductReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,6 +54,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('profile', [UserController::class,'update']);
     Route::post('logout', [UserController::class,'logout']);
     });
+
+    //  review routes
+    Route::prefix('products/{productId}')->group(function () {
+    Route::get('reviews', [ProductReviewController::class,'index']);
+    Route::post('reviews', [ProductReviewController::class,'store']);
+    Route::put('reviews/{reviewId}', [ProductReviewController::class,'update']);
+    Route::delete('reviews/{reviewId}', [ProductReviewController::class,'destroy']);
+});
 
 
 

@@ -14,8 +14,10 @@ class CategoryController extends Controller
     {
         $categories= Category::with('subCategories')->paginate(10);
 
-        return response()->json([
-            'categories'=> $categories,
+         return response()->json([
+            'success' => true,
+            'message' => 'Categories retrieved successfully.',
+            'data' => CategoryResource::collection($categories)
         ]);
     }
 
@@ -28,9 +30,10 @@ class CategoryController extends Controller
         ]);
 
         return response()->json([
-            'message'=>'Category created successfully',
-            'category'=>$category
-        ],201);
+            'success' => true,
+            'message' => 'Category created successfully.',
+            'data' => new CategoryResource($category)
+        ], 201);
     }
 
     public function show($id)
@@ -38,7 +41,9 @@ class CategoryController extends Controller
         $category= Category::with('subCategories','products','mainCategory')->findOrFail($id);
 
         return response()->json([
-            'category'=>$category,
+            'success' => true,
+            'message' => 'Category retrieved successfully.',
+            'data' => new CategoryResource($category)
         ]);
 
     }
@@ -54,8 +59,9 @@ class CategoryController extends Controller
         ]);
 
         return response()->json([
-            'message'=>'Category updated successfully',
-            'category'=>$category
+            'success' => true,
+            'message' => 'Category updated successfully.',
+            'data' => new CategoryResource($category)
         ]);
     }
 
@@ -63,9 +69,10 @@ class CategoryController extends Controller
     {
       $category= Category::findOrFail($id);
       $category->delete();
-        return response()->json([
-            'message'=>'Category deleted successfully',
+      
+         return response()->json([
+            'success' => true,
+            'message' => 'Category deleted successfully.'
         ]);
-
     }
 }
