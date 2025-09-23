@@ -19,7 +19,8 @@ class CreateOrderItemsTable extends Migration
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->integer('quantity')->default(1);
             // for saving price at the time of ordering
-            $table->decimal('price', 10, 2);
+            $table->decimal('unit_price',10,2);
+            $table->decimal('total',10,2);
             $table->timestamps();
         });
     }

@@ -11,7 +11,7 @@ class Order extends Model
 {
     use HasFactory;
      protected $table = 'orders';
-    protected $fillable= ['order_no','status','user_id','total'];
+    protected $fillable= ['status','user_id','subtotal','discount','total'];
 
     public function orderItems()
     {

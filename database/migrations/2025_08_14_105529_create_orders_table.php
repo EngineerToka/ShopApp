@@ -18,6 +18,8 @@ class CreateOrdersTable extends Migration
             $table->string('order_no')->unique();
             $table->index('order_no');
             $table->string('status')->default('pending');
+            $table->decimal('subtotal',10,2)->default(0);
+            $table->decimal('discount',10,2)->default(0);
             $table->decimal('total', 10, 2)->default(0);
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();

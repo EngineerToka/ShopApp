@@ -7,6 +7,7 @@ use App\Http\Controllers\Product\ProductsController;
 use App\Http\Controllers\Category\CategoryController;
 use App\Http\Controllers\Product\ProductImagesController;
 use App\Http\Controllers\Product\ProductReviewController;
+use App\Http\Controllers\Product\stockManagementController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,7 +32,14 @@ Route::middleware('role:admin')->group(function(){
          ->only(['store', 'update', 'destroy']);
         // user routes
        Route::apiResource('users',UserController::class)
-       ->only(['index', 'show', 'store', 'update', 'destroy']);
+       ->only(['index', 'show', 'store', 'update', 'destroy']); 
+       // stock management routes
+       Route::put('product/{productId}/stock',[stockManagementController::class,'update']);
+    //    order routes
+       Route::prefix('orders')->group(function(){
+       Route::delete('/{order_id}',[OrderController::class,'destroy']);
+       Route::put('/{order_id}',[OrderController::class,'updateStatus']);
+       });
 });
 
 Route::middleware('role:seller')->group(function(){
@@ -62,6 +70,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('reviews/{reviewId}', [ProductReviewController::class,'update']);
     Route::delete('reviews/{reviewId}', [ProductReviewController::class,'destroy']);
 });
+
+    // order routes
+    Route::prefix('orders')->group(function(){
+        Route::post('/',[OrderController::class,'store']);
+        Route::get('/',[OrderController::class,'index']);
+        Route::get('/{order_id}',[OrderController::class,'show']);
+        Route::get('/{order_id}/cancel',[OrderController::class,'cancelOrder']);
+
+
+    });
 
 
 
