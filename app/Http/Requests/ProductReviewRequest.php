@@ -24,8 +24,7 @@ class ProductReviewRequest extends FormRequest
     public function rules()
     {
         return [
-            'product_id' => 'required|exists:products,id',
-             'user_id' => 'required|exists:users,id',
+             'product_id' => 'required|exists:products,id',
              'rating'  => 'required|integer|min:1|max:5',
              'comment' => 'nullable|string|max:2000',
         ];

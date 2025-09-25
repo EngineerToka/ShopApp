@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\Order\Order;
 use App\Models\Order\Coupon;
 use App\Models\Order\OrderItem;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class orderService
 {
@@ -22,7 +24,7 @@ class orderService
                 'subtotal'=>0,
                 'discount'=>0,
                 'total'=> 0,
-                'coupon_id'=> 0,
+                'coupon_id'=> null,
             ]);
             $total = 0;
             foreach($validatedData['items'] as $item){
@@ -73,15 +75,18 @@ class orderService
                     if($coupon->min_order && $subtotal < $coupon->min_order ){
                          throw new \RuntimeException("Order does not meet minimum requirement for this coupon");
                     }
-                }
-                if($coupon->type === 'fixed'){
+
+                  if($coupon->type === 'fixed'){
                     $discount = min($coupon->value, $subtotal); 
                 }elseif ($coupon->type === 'percent'){
                     $discount = ($coupon->value/100)* $subtotal;
                 }
 
+                }
+                
 
-                $total = $subtotal- $discount;
+
+                $total = max(0,$subtotal- $discount);
 
                 $order->update([
                 'subtotal'=>$subtotal,

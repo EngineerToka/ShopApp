@@ -59,7 +59,7 @@ class OrderController extends Controller
     {
         $order =Order::findOrFail($orderId);
 
-        if($oder->status ==='pending' && $request->status == 'cancelled'){
+        if($order->status ==='pending' && $request->status == 'cancelled'){
             foreach($order->orderItems as $item){
                 $item->product->increment('quantity',$item->quantity);
             }
@@ -67,7 +67,7 @@ class OrderController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Order status updated successfully.',
+                'message' => 'Order status cancelled successfully.',
                 'data' => new OrderResource($order),
             ], 200);
             

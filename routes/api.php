@@ -46,7 +46,7 @@ Route::middleware('role:admin')->group(function(){
 });
 
 Route::middleware('role:seller')->group(function(){
-    // seller routes
+ // seller routes
     // Product routes
         Route::apiResource('product', ProductsController::class)
          ->only(['store', 'update', 'destroy']);
@@ -83,7 +83,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     });
-
 
 
 });
