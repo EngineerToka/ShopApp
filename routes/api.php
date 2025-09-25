@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Order\CouponController;
 use App\Http\Controllers\Product\ProductsController;
 use App\Http\Controllers\Category\CategoryController;
 use App\Http\Controllers\Product\ProductImagesController;
@@ -35,11 +36,13 @@ Route::middleware('role:admin')->group(function(){
        ->only(['index', 'show', 'store', 'update', 'destroy']); 
        // stock management routes
        Route::put('product/{productId}/stock',[stockManagementController::class,'update']);
-    //    order routes
+       // order routes
        Route::prefix('orders')->group(function(){
        Route::delete('/{order_id}',[OrderController::class,'destroy']);
        Route::put('/{order_id}',[OrderController::class,'updateStatus']);
        });
+    // copoun routes
+    Route::apiResource('coupons',CouponController::class);
 });
 
 Route::middleware('role:seller')->group(function(){
