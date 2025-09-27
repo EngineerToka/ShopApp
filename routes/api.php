@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Order\OrderController;
 use App\Http\Controllers\Order\CouponController;
 use App\Http\Controllers\Product\ProductsController;
 use App\Http\Controllers\Category\CategoryController;
@@ -48,7 +49,7 @@ Route::middleware('role:admin')->group(function(){
 Route::middleware('role:seller')->group(function(){
  // seller routes
     // Product routes
-        Route::apiResource('product', ProductsController::class)
+    Route::apiResource('product', ProductsController::class)
          ->only(['store', 'update', 'destroy']);
      // Product images routes
     Route::prefix('products')->group(function(){
@@ -59,6 +60,14 @@ Route::middleware('role:seller')->group(function(){
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    // product
+    Route::apiResource('products', ProductsController::class)
+     ->only(['index', 'show']);
+
+      // Category routes
+    Route::apiResource('categories',CategoryController::class)
+          ->only(['index', 'show']);
+          
     // user routes
      Route::prefix('user')->group(function(){
     Route::get('profile', [UserController::class,'profile']);
@@ -80,7 +89,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/',[OrderController::class,'index']);
         Route::get('/{order_id}',[OrderController::class,'show']);
         Route::get('/{order_id}/cancel',[OrderController::class,'cancelOrder']);
-
 
     });
 

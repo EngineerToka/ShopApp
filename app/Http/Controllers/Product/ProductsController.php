@@ -7,6 +7,7 @@ use App\Models\Product\Product;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
+use App\Http\Controllers\Controller;
 
 class ProductsController extends Controller
 {

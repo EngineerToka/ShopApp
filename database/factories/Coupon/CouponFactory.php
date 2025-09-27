@@ -1,7 +1,8 @@
 <?php
 
-namespace Database\Factories\Order;
+namespace Database\Factories\Coupon;
 
+use Carbon\Carbon;
 use App\Models\Order\Coupon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

@@ -1,7 +1,8 @@
 <?php
 
-namespace Database\Factories\Product;
+namespace Database\Factories\ProductImage;
 
+use App\Models\Product\Product;
 use App\Models\Product\ProductImage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

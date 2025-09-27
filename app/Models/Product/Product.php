@@ -18,6 +18,10 @@ class Product extends Model
     use HasFactory;
     protected $table = 'products';
     protected $fillable = ['title', 'description', 'quantity', 'price', 'discount_price', 'status','user_id','category_id'];
+    protected $casts = [
+    'created_at' => 'datetime',
+    'updated_at' => 'datetime',
+];
 
     public function images(): MorphMany
     {
@@ -30,10 +34,10 @@ class Product extends Model
      }
 
       // Accessor for created_at to return formatted date
-    public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format('d M Y');
-    }
+   //  public function getCreatedAtAttribute($value)
+   //  {
+   //      return Carbon::parse($value)->format('d M Y');
+   //  }
 
      public function user(){
         return $this->belongsTo(User::class,'user_id','id');

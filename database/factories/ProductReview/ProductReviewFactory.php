@@ -1,7 +1,9 @@
 <?php
 
-namespace Database\Factories\Product;
+namespace Database\Factories\ProductReview;
 
+use App\Models\User\User;
+use App\Models\Product\Product;
 use App\Models\Product\ProductReview;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
