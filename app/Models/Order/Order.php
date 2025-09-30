@@ -11,8 +11,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Order extends Model
 {
     use HasFactory;
-     protected $table = 'orders';
-    protected $fillable= ['status','user_id','subtotal','discount','total','coupon_id'];
+    protected $table = 'orders';
+    protected $fillable= ['order_no','status','user_id','subtotal','discount','total','copoun_id'];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function($order){
+            $order->order_no= 'ORD'.strtoupper(uniqid());
+        });
+
+    }
 
     public function orderItems()
     {

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Models\User\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 
@@ -37,7 +39,7 @@ class UserController extends Controller
          return response()->json([
             'success' => true,
             'message' => 'Users created successfully.',
-            'data' => UserResource::collection($user)
+            'data' => new UserResource($user)
         ], 201);
     }
 
@@ -69,6 +71,7 @@ class UserController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
         
         return response()->json([
+            'success' => true,
             'message' => 'Login successful',
             'data' => [
                 'access_token' => $token,

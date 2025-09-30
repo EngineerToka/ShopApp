@@ -103,5 +103,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('categories',CategoryController::class)
           ->only(['index', 'show']);
          // user routes
-     Route::post('register', [UserController::class,'register']);
+     Route::post('register', [UserController::class,'store']);
      Route::post('login', [UserController::class,'login']);

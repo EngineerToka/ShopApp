@@ -26,7 +26,7 @@ class CouponRequest extends FormRequest
         $copounId = $this->route('copoun');
 
         return [
-            'code'       => 'required|string|unique:coupons,code,' . $couponId,
+            'code'       => 'required|string|unique:coupons,code,' . $copounId,
             'type'       => 'required|in:fixed,percent',
             'value'      => 'required|numeric|min:1',
             'min_order'  => 'nullable|numeric|min:0',

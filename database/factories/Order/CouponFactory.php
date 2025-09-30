@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories\Coupon;
+namespace Database\Factories\Order;
 
 use Carbon\Carbon;
 use App\Models\Order\Coupon;

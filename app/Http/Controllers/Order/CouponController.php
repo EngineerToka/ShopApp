@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Order;
 
+use App\Models\Order\Coupon;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\CouponRequest;
+use App\Http\Resources\CopounResource;
 
 class CouponController extends Controller
 {

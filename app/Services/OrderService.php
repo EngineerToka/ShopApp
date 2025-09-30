@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Order\Order;
 use App\Models\Order\Coupon;
 use App\Models\Order\OrderItem;
+use App\Models\Product\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,12 +20,13 @@ class orderService
             $subtotal = 0;
 
             $order = Order::create([
+                'order_no'=>'ORD'.strtoupper(uniqid()),
                 'status'=> 'pending',
                 'user_id' =>$userId,
                 'subtotal'=>0,
                 'discount'=>0,
                 'total'=> 0,
-                'coupon_id'=> null,
+                'copoun_id'=> null,
             ]);
             $total = 0;
             foreach($validatedData['items'] as $item){
@@ -37,7 +39,7 @@ class orderService
                  }
 
             
-            $price = $product->discount_price ?? ($product->price * (1 - $product->discount / 100));
+            $price = $price = is_numeric($product->discount_price) ? $product->discount_price : ($product->price * (1 - ($product->discount ?? 0) / 100));
             $itemTotal = $price * $qty ;
 
              OrderItem::create([
@@ -83,7 +85,6 @@ class orderService
                 }
 
                 }
-                
 
 
                 $total = max(0,$subtotal- $discount);
@@ -92,7 +93,7 @@ class orderService
                 'subtotal'=>$subtotal,
                 'discount'=>$discount,
                 'total'=>  $total ,
-                'coupon_id'=> $coupon->id ?? null,
+                'copoun_id'=> $coupon->id ?? null,
                 ]);
 
                 if ($coupon) {
@@ -100,7 +101,7 @@ class orderService
                         }
                
             
-                    return $order->fresh()->load(['items.product','user','coupon']);
+                    return $order->fresh()->load(['orderItems.product','user','copoun']);
         });
 
     }

@@ -25,4 +25,19 @@ class Coupon extends Model
         'expires_at' => 'datetime',
         'active'     => 'boolean',
     ];
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'copoun_id', 'id');
+    }
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function($copoun){
+            $copoun->code= 'Cup'.strtoupper(uniqid());
+        });
+
+    }
+
 }
