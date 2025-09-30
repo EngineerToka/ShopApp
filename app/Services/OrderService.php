@@ -94,9 +94,10 @@ class orderService
                 'total'=>  $total ,
                 'coupon_id'=> $coupon->id ?? null,
                 ]);
-                $coupon->increment('used_count');
 
-
+                if ($coupon) {
+                   $coupon->increment('used_count');
+                        }
                
             
                     return $order->fresh()->load(['items.product','user','coupon']);
