@@ -9,7 +9,7 @@ use App\Models\Product\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-class orderService
+class OrderService
 {
     public function createOrder(array $validatedData) :Order
     {
@@ -26,7 +26,7 @@ class orderService
                 'subtotal'=>0,
                 'discount'=>0,
                 'total'=> 0,
-                'copoun_id'=> null,
+                'coupon_id'=> null,
             ]);
             $total = 0;
             foreach($validatedData['items'] as $item){
@@ -39,7 +39,7 @@ class orderService
                  }
 
             
-            $price = $price = is_numeric($product->discount_price) ? $product->discount_price : ($product->price * (1 - ($product->discount ?? 0) / 100));
+            $price = is_numeric($product->discount_price) ? $product->discount_price : ($product->price * (1 - ($product->discount ?? 0) / 100));
             $itemTotal = $price * $qty ;
 
              OrderItem::create([
@@ -93,7 +93,7 @@ class orderService
                 'subtotal'=>$subtotal,
                 'discount'=>$discount,
                 'total'=>  $total ,
-                'copoun_id'=> $coupon->id ?? null,
+                'coupon_id'=> $coupon->id ?? null,
                 ]);
 
                 if ($coupon) {

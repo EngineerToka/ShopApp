@@ -12,7 +12,7 @@ class Order extends Model
 {
     use HasFactory;
     protected $table = 'orders';
-    protected $fillable= ['order_no','status','user_id','subtotal','discount','total','copoun_id'];
+    protected $fillable= ['order_no','status','user_id','subtotal','discount','total','coupon_id'];
 
     public static function boot()
     {
@@ -33,8 +33,8 @@ class Order extends Model
     {
         return $this->belongsTo(User::class,'user_id','id');
     }
-    public function copoun()
+    public function coupon()
     {
-        return $this->belongsTo(Coupon::class,'copoun_id','id');
+        return $this->belongsTo(Coupon::class,'coupon_id','id');
     }
 }
