@@ -2,13 +2,16 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Cart\CartController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Order\OrderController;
 use App\Http\Controllers\Order\CouponController;
+use App\Http\Controllers\Cart\CartItemController;
 use App\Http\Controllers\Product\ProductsController;
 use App\Http\Controllers\Category\CategoryController;
 use App\Http\Controllers\Product\ProductImagesController;
 use App\Http\Controllers\Product\ProductReviewController;
+use App\Http\Controllers\WishList\wishlistItemController;
 use App\Http\Controllers\Product\stockManagementController;
 
 /*
@@ -41,6 +44,7 @@ Route::middleware('role:admin')->group(function(){
        Route::prefix('orders')->group(function(){
        Route::delete('/{order_id}',[OrderController::class,'destroy']);
        Route::put('/{order_id}',[OrderController::class,'updateStatus']);
+       Route::post('/',[OrderController::class,'store']);
        });
     // copoun routes
     Route::apiResource('coupons',CouponController::class);
@@ -81,21 +85,41 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('reviews', [ProductReviewController::class,'store']);
     Route::put('reviews/{reviewId}', [ProductReviewController::class,'update']);
     Route::delete('reviews/{reviewId}', [ProductReviewController::class,'destroy']);
-});
+     });
 
     // order routes
     Route::prefix('orders')->group(function(){
-        Route::post('/',[OrderController::class,'store']);
         Route::get('/',[OrderController::class,'index']);
         Route::get('/{order_id}',[OrderController::class,'show']);
         Route::get('/{order_id}/cancel',[OrderController::class,'cancelOrder']);
 
     });
 
+      // Cart Routes
+  Route::prefix('cart')->group(function(){
+    Route::get('/', [CartController::class, 'index']);
+    Route::post('/add', [CartController::class, 'store']);
+    Route::post('/apply-coupon', [CartController::class, 'applyCoupon']);
+    Route::post('/checkout', [CartController::class, 'checkout']);
+    Route::delete('/clear', [CartController::class, 'clearCart']);
+    // Cart Items
+    Route::delete('/items/{id}', [CartItemController::class, 'removeItem']);
+       });
+       
+    // Wishlist Routes
+ Route::prefix('wishlist')->group(function(){
+    Route::get('/', [WishlistController::class, 'index']);
+    Route::post('/add', [WishlistController::class, 'store']);
+    Route::post('/move-to-cart/{id}', [WishlistController::class, 'addToCart']);
+    Route::delete('/clear', [WishlistController::class, 'clearWishlist']);
+    // Wishlist Items
+    Route::delete('/items/{id}', [wishlistItemController::class, 'removeItem']);
+       });
+
 
 });
-// unAuthenticated routes
 
+// unAuthenticated routes
        // Product routes
     Route::apiResource('products', ProductsController::class)
      ->only(['index', 'show']);

@@ -3,82 +3,76 @@
 namespace App\Http\Controllers\Cart;
 
 use Illuminate\Http\Request;
+use App\Services\CartService;
+use App\Http\Requests\CartRequest;
+use App\Http\Resources\CartResource;
+use App\Http\Resources\OrderResource;
+use App\Http\Requests\CartItemRequest;
+use App\Http\Resources\CopounResource;
 
 class CartController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    protected $cartService;
+
+    public function __construct(CartService $cartService)
+    {
+          $this->cartService = $cartService;
+    }
+
     public function index()
     {
-        //
+       $cart= $cartService->getUserCart();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cart retrieved successfully.',
+            'data' => new CartResource($cart)
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+
+    public function store(CartItemRequest $request)
     {
-        //
+         $cart= $cartService->addToCart($request->validated());
+            return response()->json([
+                'success' => true,
+                'message' => 'Item added to cart successfully.',
+                'data' => new CartResource($cart)
+            ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function applyCoupon(CartRequest $request)
     {
-        //
+        $cart = $cartService->getUserCart();
+        $coupon= $cartService->applyCoupon($cart,$request->code);
+
+        return response()->json( [
+            'success' => true,
+            'message' => 'Coupon applied successfully.',
+            'data' => new CopounResource($coupon),
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function checkout()
     {
-        //
+         $order = $cartService->checkout();
+
+         return response()->json([
+            'success' => true,
+            'message' => 'Order created successfully.',
+            'data' => new OrderResource($order),
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function clearCart()
     {
-        //
+        $cart = $cartService->getUserCart();
+        $cart->cartItems()->delete();
+        $cart->update(['coupon_id' => null]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Cart cleared successfully.',
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

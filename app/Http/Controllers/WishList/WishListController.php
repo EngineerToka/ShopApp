@@ -3,82 +3,63 @@
 namespace App\Http\Controllers\WishList;
 
 use Illuminate\Http\Request;
+use App\Services\WishlistService;
+use App\Http\Requests\WishlistRequest;
+use App\Http\Resources\WishlistResource;
+use App\Http\Requests\WishlistItemRequest;
 
 class WishListController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    protected $wishlistService;
+
+    public function __construct(WishlistService $wishlistService)
+    {
+          $this->wishlistService = $wishlistService;
+    }
+
     public function index()
     {
-        //
+       $wishlist= $wishlistService->getUserWishlist();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'wishlist retrieved successfully.',
+            'data' => new WishlistResource($wishlist)
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+
+    public function store(WishlistItemRequest $request)
     {
-        //
+         $wishlist= $wishlistService->add($request->validated);
+            return response()->json([
+                'success' => true,
+                'message' => 'Item added to cart successfully.',
+                'data' => new WishlistResource($wishlist)
+            ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function addToCart($itemId)
     {
-        //
+         $response= $wishlistService->addToCart($itemId);
+    
+
+        return response()->json( [
+            'success' => true,
+            'message' => $response['message'],
+            'data' => [],
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+
+    public function clearWishlist()
     {
-        //
+        $wishlist = $wishlistService->getUserWishlist();
+        $wishlist->wishlistItems()->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Wishlist cleared successfully.',
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

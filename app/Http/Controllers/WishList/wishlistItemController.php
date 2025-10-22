@@ -3,82 +3,28 @@
 namespace App\Http\Controllers\WishList;
 
 use Illuminate\Http\Request;
+use App\Services\WishlistService;
 
 class wishlistItemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    protected $wishlistService;
+
+    public function __construct(WishlistService $wishlistService)
     {
-        //
+          $this->wishlistService = $wishlistService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function removeItem($id)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+       $wishlist= $wishlistService->getUserWishlist();
+       $item = $wishlist->wishlistItems()->where('id',$id)->firstOrFail();
+       $item->delete();  
+       
+       return response()->json([
+            'success' => true,
+            'message' => 'Item removed from wishlist successfully.',
+            'data' => []
+        ]);
+        
     }
 }
