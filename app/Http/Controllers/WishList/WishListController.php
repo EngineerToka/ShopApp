@@ -4,6 +4,7 @@ namespace App\Http\Controllers\WishList;
 
 use Illuminate\Http\Request;
 use App\Services\WishlistService;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\WishlistRequest;
 use App\Http\Resources\WishlistResource;
 use App\Http\Requests\WishlistItemRequest;
@@ -19,7 +20,7 @@ class WishListController extends Controller
 
     public function index()
     {
-       $wishlist= $wishlistService->getUserWishlist();
+       $wishlist= $this->wishlistService->getUserWishlist();
 
         return response()->json([
             'success' => true,
@@ -31,7 +32,7 @@ class WishListController extends Controller
 
     public function store(WishlistItemRequest $request)
     {
-         $wishlist= $wishlistService->add($request->validated);
+         $wishlist= $this->wishlistService->add($request->validated);
             return response()->json([
                 'success' => true,
                 'message' => 'Item added to cart successfully.',
@@ -41,7 +42,7 @@ class WishListController extends Controller
 
     public function addToCart($itemId)
     {
-         $response= $wishlistService->addToCart($itemId);
+         $response= $this->wishlistService->addToCart($itemId);
     
 
         return response()->json( [
@@ -54,7 +55,7 @@ class WishListController extends Controller
 
     public function clearWishlist()
     {
-        $wishlist = $wishlistService->getUserWishlist();
+        $wishlist = $this->wishlistService->getUserWishlist();
         $wishlist->wishlistItems()->delete();
         return response()->json([
             'success' => true,

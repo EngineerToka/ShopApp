@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Cart\Cart;
 use App\Models\Order\Order;
+use App\Models\Order\Coupon;
 use App\Models\Cart\CartItem;
 use App\Services\OrderService;
 use App\Models\Product\Product;

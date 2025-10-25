@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Cart;
 use Illuminate\Http\Request;
 use App\Services\CartService;
 use App\Http\Requests\CartRequest;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\CartResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Requests\CartItemRequest;
@@ -21,7 +22,7 @@ class CartController extends Controller
 
     public function index()
     {
-       $cart= $cartService->getUserCart();
+       $cart= $this->cartService->getUserCart();
 
         return response()->json([
             'success' => true,
@@ -33,7 +34,7 @@ class CartController extends Controller
 
     public function store(CartItemRequest $request)
     {
-         $cart= $cartService->addToCart($request->validated());
+         $cart= $this->cartService->addToCart($request->validated());
             return response()->json([
                 'success' => true,
                 'message' => 'Item added to cart successfully.',
@@ -43,8 +44,8 @@ class CartController extends Controller
 
     public function applyCoupon(CartRequest $request)
     {
-        $cart = $cartService->getUserCart();
-        $coupon= $cartService->applyCoupon($cart,$request->code);
+        $cart = $this->cartService->getUserCart();
+        $coupon= $this->cartService->applyCoupon($cart,$request->code);
 
         return response()->json( [
             'success' => true,
@@ -55,7 +56,7 @@ class CartController extends Controller
 
     public function checkout()
     {
-         $order = $cartService->checkout();
+         $order = $this->cartService->checkout();
 
          return response()->json([
             'success' => true,
@@ -66,13 +67,14 @@ class CartController extends Controller
 
     public function clearCart()
     {
-        $cart = $cartService->getUserCart();
+        $cart = $this->getUserCart();
         $cart->cartItems()->delete();
         $cart->update(['coupon_id' => null]);
         return response()->json([
             'success' => true,
             'message' => 'Cart cleared successfully.',
         ]);
+        
     }
 
 }

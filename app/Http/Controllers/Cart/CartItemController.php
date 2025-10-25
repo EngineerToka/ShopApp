@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Cart;
 
 use App\Models\CartItem;
 use Illuminate\Http\Request;
+use App\Services\CartService;
+use App\Http\Controllers\Controller;
 
 class CartItemController extends Controller
 {
@@ -16,7 +18,7 @@ class CartItemController extends Controller
 
     public function removeItem($id)
     {
-       $cart= $cartService->getUserCart();
+       $cart= $this->cartService->getUserCart();
        $item = $cart->cartItems()->where('id',$id)->firstOrFail();
        $item->delete();  
        

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\WishList;
 
 use Illuminate\Http\Request;
 use App\Services\WishlistService;
+use App\Http\Controllers\Controller;
 
 class wishlistItemController extends Controller
 {
@@ -16,11 +17,9 @@ class wishlistItemController extends Controller
 
     public function removeItem($id)
     {
-       $wishlist= $wishlistService->getUserWishlist();
-       $item = $wishlist->wishlistItems()->where('id',$id)->firstOrFail();
-       $item->delete();  
-       
-       return response()->json([
+        $this->wishlistService->remove($id);
+
+        return response()->json([
             'success' => true,
             'message' => 'Item removed from wishlist successfully.',
             'data' => []

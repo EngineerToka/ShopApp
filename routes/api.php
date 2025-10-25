@@ -9,6 +9,7 @@ use App\Http\Controllers\Order\CouponController;
 use App\Http\Controllers\Cart\CartItemController;
 use App\Http\Controllers\Product\ProductsController;
 use App\Http\Controllers\Category\CategoryController;
+use App\Http\Controllers\WishList\WishListController;
 use App\Http\Controllers\Product\ProductImagesController;
 use App\Http\Controllers\Product\ProductReviewController;
 use App\Http\Controllers\WishList\wishlistItemController;
@@ -108,10 +109,10 @@ Route::middleware('auth:sanctum')->group(function () {
        
     // Wishlist Routes
  Route::prefix('wishlist')->group(function(){
-    Route::get('/', [WishlistController::class, 'index']);
-    Route::post('/add', [WishlistController::class, 'store']);
-    Route::post('/move-to-cart/{id}', [WishlistController::class, 'addToCart']);
-    Route::delete('/clear', [WishlistController::class, 'clearWishlist']);
+    Route::get('/', [WishListController::class, 'index']);
+    Route::post('/add', [WishListController::class, 'store']);
+    Route::post('/move-to-cart/{id}', [WishListController::class, 'addToCart']);
+    Route::delete('/clear', [WishListController::class, 'clearWishlist']);
     // Wishlist Items
     Route::delete('/items/{id}', [wishlistItemController::class, 'removeItem']);
        });

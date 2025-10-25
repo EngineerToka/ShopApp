@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Services\CartService;
 use App\Models\Product\Product;
 use App\Models\WishList\WishList;
+use Illuminate\Support\Facades\Auth;
+use App\Models\WishList\wishlistItem;
 
 
 class WishlistService
@@ -41,9 +43,9 @@ class WishlistService
   }
 
   public function addToCart($itemId){
-     $wishlistItems = wishlistItems::with('product')->findOrFail($itemId);
+     $wishlistItems = wishlistItem::with('product')->findOrFail($itemId);
      $this->cartService->addToCart([
-        'product_id'=>$wishlistItems->id,
+        'product_id'=>$wishlistItems->product_id,
         'quantity'=>1,
      ]);
      
@@ -56,10 +58,7 @@ class WishlistService
 
       public function remove(int $itemId)
     {
-        $user = Auth::user();
-        $item = WishlistItem::where('id', $itemId)
-            ->whereHas('wishlist', fn($q) => $q->where('user_id', $user->id))
-            ->firstOrFail();
-        $item->delete();
+        $wishlist = $this->getUserWishlist();
+        $wishlist->wishlistItems()->delete();
     }
 }

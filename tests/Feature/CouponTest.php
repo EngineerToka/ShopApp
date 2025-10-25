@@ -14,7 +14,7 @@ class CouponTest extends TestCase
 
    public function test_admin_can_create_coupon()
    {
-    $admin = User::factory()->create( ['role'=>'admin']);
+    $admin = User::factory()->create(['role'=>'admin']);
     $this->actingAs($admin,'sanctum');
      $copoun = Coupon::factory()->raw();
 
