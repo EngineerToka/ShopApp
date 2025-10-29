@@ -33,7 +33,7 @@ class WishlistService
     $exists = $wishlist->wishlistItems()->where('product_id',  $product->id)->exists();
 
     if(!$exists){
-      $wishlist->wishlistItems->create([
+      $wishlist->wishlistItems()->create([
         'product_id' => $product->id,
       ]);
     }
