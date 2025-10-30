@@ -7,6 +7,7 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Order\OrderController;
 use App\Http\Controllers\Order\CouponController;
 use App\Http\Controllers\Cart\CartItemController;
+use App\Http\Controllers\Payment\PaymentController;
 use App\Http\Controllers\Product\ProductsController;
 use App\Http\Controllers\Category\CategoryController;
 use App\Http\Controllers\WishList\WishListController;
@@ -116,6 +117,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Wishlist Items
     Route::delete('/items/{id}', [wishlistItemController::class, 'removeItem']);
        });
+
+    //    stripe payment routes
+    Route::post('/payment/create', [PaymentController::class, 'createCheckOut']);
+    Route::post('/payment/webhook', [PaymentController::class, 'Webhook']);
 
 
 });

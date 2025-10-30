@@ -22,7 +22,11 @@ class CreateOrdersTable extends Migration
             $table->decimal('discount',10,2)->default(0);
             $table->decimal('total', 10, 2)->default(0);
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('coupon_id')->nullable()->constrained('coupons')->nullOnDelete();          
+            $table->foreignId('coupon_id')->nullable()->constrained('coupons')->nullOnDelete();
+            $table->string('payment_status')->default('unpaid');
+            $table->string('payment_method')->nullable();
+            $table->string('payment_reference')->nullable();
+            $table->timestamp('completed_at')->nullable();          
             $table->timestamps();
         });
     }
